@@ -44,7 +44,20 @@ function saveAccounts() {
 }
 
 function getAccount(id) {
+    if (typeof accounts[id] == 'undefined') createAccount(id);
     return accounts[id];
+}
+
+function sendChat(str) {
+    if (!cl.isConnected()) return;
+    cl.sendArray([{
+        m: 'a',
+        message: `\u034f${str}`
+    }]);
+}
+
+function startWorking(id) {
+    let acc = getAccount(id);
 }
 
 cl.start();
@@ -82,10 +95,12 @@ cmapi.on('test_hi', msg => {
 
 cl.on('participant removed', p => {
     // user left, possibly still subscribed
-    if (userIsKnown(p.id)) removeKnownUser(id);
+    if (userIsKnown(p.id)) {
+        removeKnownUser(id);
+    }
 });
 
 cmapi.on('test_start_working', msg => {
-    cl.sendArray([{}])
+    sendChat(`${cl.ppl[msg._original_sender]} started working.`);
 });
 
